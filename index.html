@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>URL to QR Code Converter with Logo</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            text-align: center;
+        }
+        input, button {
+            margin: 10px 0;
+            padding: 5px;
+        }
+        #qrcode {
+            margin-top: 20px;
+        }
+        #qrcode img {
+            margin: 0 auto;
+        }
+    </style>
+</head>
+<body>
+    <h1>URL to QR Code Converter with Logo</h1>
+    <input type="text" id="url" placeholder="Enter URL here">
+    <input type="file" id="logo" accept="image/*">
+    <button onclick="generateQR()">Generate QR Code with Logo</button>
+    <div id="qrcode"></div>
+
+    <script>
+        function generateQR() {
+            const url = document.getElementById('url').value;
+            const logoFile = document.getElementById('logo').files[0];
+            const qrcode = document.getElementById('qrcode');
+            
+            // Clear previous QR code
+            qrcode.innerHTML = '';
+            
+            if (url) {
+                // Generate QR code
+                new QRCode(qrcode, {
+                    text: url,
+                    width: 256,
+                    height: 256
+                });
+                
+                if (logoFile) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const logo = document.createElement('img');
+                        logo.src = e.target.result;
+                        logo.style.width = '50px';  // Adjust size as needed
+                        logo.style.height = 'auto';
+                        logo.style.position = 'absolute';
+                        logo.style.top = '50%';
+                        logo.style.left = '50%';
+                        logo.style.transform = 'translate(-50%, -50%)';
+                        
+                        // Wait for QR code to be generated
+                        setTimeout(() => {
+                            const qrImage = qrcode.querySelector('img');
+                            const container = document.createElement('div');
+                            container.style.position = 'relative';
+                            container.style.display = 'inline-block';
+                            qrImage.parentNode.insertBefore(container, qrImage);
+                            container.appendChild(qrImage);
+                            container.appendChild(logo);
+                        }, 100);
+                    };
+                    reader.readAsDataURL(logoFile);
+                }
+            } else {
+                alert('Please enter a URL');
+            }
+        }
+    </script>
+</body>
+</html>
